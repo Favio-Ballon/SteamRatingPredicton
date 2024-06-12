@@ -4,13 +4,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import r2_score
 
 # Cargar los datos
 data = pd.read_csv('steam.csv', index_col='appid')
 
 # Variables objetivo y características
 y = data['positive_ratings']
-features = ['release_date', 'english', 'developer', 'publisher', 'platforms', 'required_age', 'categories', 'genres', 'steamspy_tags', 'average_playtime', 'median_playtime', 'owners', 'price']
+features = ['english', 'publisher', 'platforms', 'required_age', 'categories',  'average_playtime', 'median_playtime', 'owners', 'price']
 X = data[features]
 
 # Tratamiento de valores nulos
@@ -19,12 +20,7 @@ X = X.fillna({
     'platforms': 'unknown'
 })
 
-# Conversión de tipos de datos
-X['release_date'] = pd.to_datetime(X['release_date'], errors='coerce')
-X['release_year'] = X['release_date'].dt.year.fillna(0).astype(int)
-X['release_month'] = X['release_date'].dt.month.fillna(0).astype(int)
-X['release_day'] = X['release_date'].dt.day.fillna(0).astype(int)
-X = X.drop('release_date', axis=1)
+X['price'] = X['price'].round(0).astype(int)
 
 train_X, val_X, train_y, val_y = train_test_split(X, y, random_state=1)
 
